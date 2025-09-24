@@ -55,26 +55,20 @@ function startAnimation() {
   const intervalTime = 6000 / steps;
   let step = 0;
 
-  // 🔊 Reproducir audio inmediatamente en el click
-  bgAudio.currentTime = 0;
-  bgAudio.volume = 0;
-  const playPromise = bgAudio.play();
-  if (playPromise !== undefined) {
-    playPromise.catch(err => {
-      console.warn("No se pudo reproducir audio: ", err);
+  // 🎵 Audio: desbloquear y fade in
+  try {
+    bgAudio.muted = false;       // quitar mute
+    bgAudio.currentTime = 0;     // reiniciar
+    bgAudio.volume = 0;          // 👈 iniciar en 0
+    bgAudio.play().then(() => {
+      fadeInAudio();             // iniciar fade después del play
+    }).catch(err => {
+      console.warn("Audio bloqueado:", err);
     });
+  } catch (err) {
+    console.warn("Error al iniciar audio:", err);
   }
 
-  // Fade-in a 0.6 en 6 segundos
-  const fadeSteps = 60;
-  let fadeStep = 0;
-  const fadeInterval = setInterval(() => {
-    fadeStep++;
-    bgAudio.volume = Math.min((fadeStep / fadeSteps) * 0.6, 0.6);
-    if (fadeStep >= fadeSteps) clearInterval(fadeInterval);
-  }, 100); // 100ms × 60 ≈ 6s
-
-  // Animación de escala y flip
   const interval = setInterval(() => {
     step++;
     scale += (1 - 0.05) / steps;
@@ -82,7 +76,6 @@ function startAnimation() {
     if (step % 3 === 0) flip = !flip;
     mainGif.style.transform = `scale(${scale}) scaleX(${flip ? -1 : 1})`;
 
-    // Fade-in del fondo
     background.style.opacity = Math.min(
       parseFloat(background.style.opacity || 0) + 1 / steps,
       1
@@ -94,6 +87,22 @@ function startAnimation() {
     }
   }, intervalTime);
 }
+
+// 🎚️ Fade in del volumen hasta 0.6 en 6s
+function fadeInAudio() {
+  const duration = 6000;  // 6 segundos
+  const steps = 60;       // 60 pasos (~100ms cada uno)
+  let step = 0;
+
+  const interval = setInterval(() => {
+    step++;
+    const newVolume = Math.min((step / steps) * 0.6, 0.6);
+    bgAudio.volume = newVolume;
+
+    if (step >= steps) clearInterval(interval);
+  }, duration / steps);
+}
+
 
 // ============================
 // Secuencia de GIFs
