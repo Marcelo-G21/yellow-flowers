@@ -19,7 +19,6 @@ let gifIndex = 0;
 let flowers = [];
 const flowerSize = 40;
 
-// Contenedor de flores debajo de la card
 const flowersContainer = document.createElement("div");
 flowersContainer.style.position = "absolute";
 flowersContainer.style.top = 0;
@@ -61,14 +60,13 @@ function startAnimation() {
   const intervalTime = 6000 / steps;
   let step = 0;
 
-  // 🔊 Reproducir audio dentro de la interacción
+  // 🔊 Reproducir audio solo por la interacción del usuario
   bgAudio.currentTime = 0;
   bgAudio.muted = false;
-  bgAudio.play()
-    .then(() => fadeInAudio())
-    .catch(err => console.warn("Audio bloqueado hasta interacción del usuario:", err));
+  bgAudio.play().then(() => fadeInAudio()).catch(err => {
+    console.warn("Audio bloqueado hasta interacción:", err);
+  });
 
-  // Animación de escala y fondo
   const interval = setInterval(() => {
     step++;
     scale += (1 - 0.05) / steps;
@@ -137,15 +135,13 @@ function createFlower() {
 }
 
 function createFlowerBurst() {
-  for (let i = 0; i < 10; i++) {
-    createFlower();
-  }
+  for (let i = 0; i < 10; i++) createFlower();
 }
 
 // ============================
 // Listeners para botones
 // ============================
-// Solo aquí hacemos play del audio, para máxima compatibilidad en móvil
+// Solo aquí se desbloquea audio por interacción
 startBtn.addEventListener("click", startAnimation);
 startBtn.addEventListener("touchstart", startAnimation);
 
