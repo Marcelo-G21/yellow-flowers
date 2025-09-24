@@ -6,7 +6,7 @@ html, body {
     overflow: hidden;
     font-family: "Brush Script MT", cursive;
     touch-action: manipulation;
-    background-image: url("/assets/initialBackground.jpg");
+    background-image: url("assets/initialBackground.jpg");
   }
   
   #container {
@@ -86,17 +86,17 @@ html, body {
 /* Texto “Flores amarillas para ti” */
 #gifText {
   position: absolute;
-  top: 20px; /* arriba de todo */
+  top: 60px; /* antes 20px, subimos un poco */
   left: 50%;
   transform: translateX(-50%);
-  background-color: rgba(255, 255, 0, 0.8); /* fondo amarillo semi-transparente */
+  background-color: rgba(255, 255, 0, 0.8);
   padding: 8px 16px;
   border-radius: 10px;
   font-family: 'Pacifico', cursive;
   font-size: 1.5em;
   color: #000;
   text-align: center;
-  z-index: 11; /* encima de la card */
+  z-index: 11;
 }
   
   #gifText.show {
@@ -104,21 +104,24 @@ html, body {
   }
   
  /* Botón de lluvia de flores */
-#flowerBtn {
-    position: absolute;
-    bottom: 30px; /* abajo del contenedor, fuera de la card */
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.5em;
-    padding: 10px 20px;
-    border-radius: 10px;
-    border: none;
-    background-color: #FFD700;
-    color: #000;
-    cursor: pointer;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-    z-index: 11; /* encima de la card */
-  }
+ #flowerBtn {
+  position: absolute;
+  bottom: 80px; /* antes 30px, subimos un poco hacia la card */
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5em;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  background-color: #FFD700;
+  color: #000;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  z-index: 11;
+  display: block;
+  text-align: center;
+  animation: pulse 1.5s infinite ease-in-out;
+}
   
   #flowerBtn:hover {
     transform: translateX(-50%) scale(1.05);

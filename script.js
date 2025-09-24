@@ -10,7 +10,7 @@ const flowerBtn = document.getElementById("flowerBtn");
 const background = document.getElementById("background");
 const bgAudio = document.getElementById("bgAudio");
 
-const gifSequence = ["/assets/gif1.gif", "/assets/gif2.gif", "/assets/gif3.gif"];
+const gifSequence = ["assets/gif1.gif", "assets/gif2.gif", "assets/gif3.gif"];
 let gifIndex = 0;
 
 // ============================
@@ -46,7 +46,7 @@ function startAnimation() {
   title.classList.add("hidden");
   gifCard.classList.remove("hidden");
 
-  mainGif.src = "/assets/initial.gif";
+  mainGif.src = "assets/initial.gif";
   mainGif.style.transform = "scale(0.05)";
 
   let scale = 0.05;
@@ -133,7 +133,7 @@ function showGifSequence() {
 // ============================
 function createFlower() {
   const flower = document.createElement("img");
-  flower.src = "/assets/flower.png";
+  flower.src = "assets/flower.png";
   flower.style.width = flowerSize + "px";
   flower.style.height = flowerSize + "px";
   flower.style.position = "absolute";
