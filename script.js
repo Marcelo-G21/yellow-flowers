@@ -14,14 +14,6 @@ const gifSequence = ["assets/gif1.gif", "assets/gif2.gif", "assets/gif3.gif"];
 let gifIndex = 0;
 
 // ============================
-// Listeners para botones
-// ============================
-startBtn.addEventListener("click", startAnimation);
-startBtn.addEventListener("touchstart", startAnimation);
-flowerBtn.addEventListener("click", createFlowerBurst);
-flowerBtn.addEventListener("touchstart", createFlowerBurst);
-
-// ============================
 // Configuración de las flores
 // ============================
 let flowers = [];
@@ -35,8 +27,22 @@ flowersContainer.style.left = 0;
 flowersContainer.style.width = "100%";
 flowersContainer.style.height = "100%";
 flowersContainer.style.pointerEvents = "none";
-flowersContainer.style.zIndex = 5; // debajo de la card y botón
+flowersContainer.style.zIndex = 5;
 document.getElementById("container").appendChild(flowersContainer);
+
+// ============================
+// Función de fade-in de audio
+// ============================
+function fadeInAudio(targetVolume = 0.6, duration = 6000) {
+  bgAudio.volume = 0;
+  const steps = 60;
+  let step = 0;
+  const interval = setInterval(() => {
+    step++;
+    bgAudio.volume = Math.min((step / steps) * targetVolume, targetVolume);
+    if (step >= steps) clearInterval(interval);
+  }, duration / steps);
+}
 
 // ============================
 // Animación principal del GIF
@@ -55,24 +61,17 @@ function startAnimation() {
   const intervalTime = 6000 / steps;
   let step = 0;
 
-  // 🎵 Audio: desbloquear y fade in
-  try {
-    bgAudio.muted = false;       // quitar mute
-    bgAudio.currentTime = 0;     // reiniciar
-    bgAudio.volume = 0;          // 👈 iniciar en 0
-    bgAudio.play().then(() => {
-      fadeInAudio();             // iniciar fade después del play
-    }).catch(err => {
-      console.warn("Audio bloqueado:", err);
-    });
-  } catch (err) {
-    console.warn("Error al iniciar audio:", err);
-  }
+  // 🔊 Reproducir audio dentro de la interacción
+  bgAudio.currentTime = 0;
+  bgAudio.muted = false;
+  bgAudio.play()
+    .then(() => fadeInAudio())
+    .catch(err => console.warn("Audio bloqueado hasta interacción del usuario:", err));
 
+  // Animación de escala y fondo
   const interval = setInterval(() => {
     step++;
     scale += (1 - 0.05) / steps;
-
     if (step % 3 === 0) flip = !flip;
     mainGif.style.transform = `scale(${scale}) scaleX(${flip ? -1 : 1})`;
 
@@ -88,22 +87,6 @@ function startAnimation() {
   }, intervalTime);
 }
 
-// 🎚️ Fade in del volumen hasta 0.6 en 6s
-function fadeInAudio() {
-  const duration = 6000;  // 6 segundos
-  const steps = 60;       // 60 pasos (~100ms cada uno)
-  let step = 0;
-
-  const interval = setInterval(() => {
-    step++;
-    const newVolume = Math.min((step / steps) * 0.6, 0.6);
-    bgAudio.volume = newVolume;
-
-    if (step >= steps) clearInterval(interval);
-  }, duration / steps);
-}
-
-
 // ============================
 // Secuencia de GIFs
 // ============================
@@ -116,7 +99,6 @@ function showGifSequence() {
     if (gifIndex < gifSequence.length) {
       mainGif.src = gifSequence[gifIndex];
       mainGif.style.transform = "scale(1)";
-
       if (gifIndex === 1) {
         gifText.classList.remove("hidden");
         gifText.classList.add("show");
@@ -138,19 +120,16 @@ function createFlower() {
   flower.style.height = flowerSize + "px";
   flower.style.position = "absolute";
 
-  // Posición aleatoria en pantalla
   const x = Math.random() * (window.innerWidth - flowerSize);
   const y = Math.random() * (window.innerHeight - flowerSize);
   flower.style.left = x + "px";
   flower.style.top = y + "px";
 
-  // Opacidad inicial
   flower.style.opacity = 1;
   flower.style.transition = "opacity 1s ease-out";
 
   flowersContainer.appendChild(flower);
 
-  // Mantener visible 3 segundos y desaparecer
   setTimeout(() => {
     flower.style.opacity = 0;
     setTimeout(() => flower.remove(), 1000);
@@ -162,3 +141,13 @@ function createFlowerBurst() {
     createFlower();
   }
 }
+
+// ============================
+// Listeners para botones
+// ============================
+// Solo aquí hacemos play del audio, para máxima compatibilidad en móvil
+startBtn.addEventListener("click", startAnimation);
+startBtn.addEventListener("touchstart", startAnimation);
+
+flowerBtn.addEventListener("click", createFlowerBurst);
+flowerBtn.addEventListener("touchstart", createFlowerBurst);
