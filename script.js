@@ -8,7 +8,6 @@ const mainGif = document.getElementById("mainGif");
 const gifText = document.getElementById("gifText");
 const flowerBtn = document.getElementById("flowerBtn");
 const background = document.getElementById("background");
-const bgAudio = document.getElementById("bgAudio");
 
 const gifSequence = ["assets/gif1.gif", "assets/gif2.gif", "assets/gif3.gif"];
 let gifIndex = 0;
@@ -22,11 +21,9 @@ flowerBtn.addEventListener("click", createFlowerBurst);
 flowerBtn.addEventListener("touchstart", createFlowerBurst);
 
 // ============================
-// Configuración de las flores
+// Configuración de flores
 // ============================
-let flowers = [];
 const flowerSize = 40;
-
 const flowersContainer = document.createElement("div");
 flowersContainer.style.position = "absolute";
 flowersContainer.style.top = 0;
@@ -34,15 +31,17 @@ flowersContainer.style.left = 0;
 flowersContainer.style.width = "100%";
 flowersContainer.style.height = "100%";
 flowersContainer.style.pointerEvents = "none";
-flowersContainer.style.zIndex = 5;
+flowersContainer.style.zIndex = 5; // debajo de la card y botones
 document.getElementById("container").appendChild(flowersContainer);
 
 // ============================
 // Handler unificado de inicio
 // ============================
+let bgAudio = null; // variable global para audio dinámico
+
 function startHandler() {
   startAnimation();
-  playAudioFade();
+  playAudioFadeDynamic();
 }
 
 // ============================
@@ -81,33 +80,32 @@ function startAnimation() {
 }
 
 // ============================
-// Reproducción de audio con fade-in
+// Reproducción de audio con fade-in dinámico
 // ============================
-function playAudioFade() {
-  try {
+function playAudioFadeDynamic() {
+  if (bgAudio) {
+    // Detener cualquier audio previo
     bgAudio.pause();
-    bgAudio.currentTime = 0;
-    bgAudio.muted = false;
-    bgAudio.volume = 0;
-
-    const playPromise = bgAudio.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          const duration = 6000; // 6 segundos
-          const steps = 60;
-          let step = 0;
-          const interval = setInterval(() => {
-            step++;
-            bgAudio.volume = Math.min((step / steps) * 0.6, 0.6);
-            if (step >= steps) clearInterval(interval);
-          }, duration / steps);
-        })
-        .catch(err => console.warn("Audio bloqueado hasta interacción:", err));
-    }
-  } catch (err) {
-    console.warn("Error al reproducir audio:", err);
+    bgAudio = null;
   }
+
+  bgAudio = new Audio("assets/music.mp3");
+  bgAudio.volume = 0;
+  bgAudio.muted = false;
+  bgAudio.loop = true;
+  bgAudio.play().then(() => {
+    // Fade-in hasta 0.6 en 6 segundos
+    const duration = 6000;
+    const steps = 60;
+    let step = 0;
+    const interval = setInterval(() => {
+      step++;
+      bgAudio.volume = Math.min((step / steps) * 0.6, 0.6);
+      if (step >= steps) clearInterval(interval);
+    }, duration / steps);
+  }).catch(err => {
+    console.warn("Audio bloqueado hasta interacción:", err);
+  });
 }
 
 // ============================
@@ -143,6 +141,7 @@ function createFlower() {
   flower.style.height = flowerSize + "px";
   flower.style.position = "absolute";
 
+  // Posición aleatoria
   const x = Math.random() * (window.innerWidth - flowerSize);
   const y = Math.random() * (window.innerHeight - flowerSize);
   flower.style.left = x + "px";
