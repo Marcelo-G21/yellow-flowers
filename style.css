@@ -6,7 +6,7 @@ html, body {
     overflow: hidden;
     font-family: "Brush Script MT", cursive;
     touch-action: manipulation;
-    background-image: url("assets/initialBackground.jpg");
+    background-image: url("/assets/initialBackground.jpg");
   }
   
   #container {
